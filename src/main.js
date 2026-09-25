@@ -38,10 +38,13 @@ function calculateBonusByProfit(index, total, seller) {
 
 function analyzeSalesData(data, options) {
     //Проверка входных данных
-    if (!data || !data.purchase_records) {
+    if (
+        !data ||
+        !Array.isArray(data.purchase_records) ||
+        data.purchase_records.length === 0
+    ) {
         throw new Error("Некорректные данные");
     }
-
     //Проверка наличия опций
     if (typeof options !== "object" || options === null) {
         throw new Error("Некорректные options");
