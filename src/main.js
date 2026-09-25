@@ -8,12 +8,6 @@ function groupBy(array, keyFn) {
     }, {})
 } 
 
-/**
- * Функция для расчета выручки
- * @param purchase запись о покупке
- * @param _product карточка товара
- * @returns {number}
- */
 function calculateSimpleRevenue(purchase, _product) {
     const { discount, sale_price, quantity } = purchase;
 
@@ -24,13 +18,6 @@ function calculateSimpleRevenue(purchase, _product) {
     return revenue;
 }
 
-/**
- * Функция для расчета бонусов
- * @param index порядковый номер в отсортированном массиве
- * @param total общее число продавцов
- * @param seller карточка продавца
- * @returns {number}
- */
 function calculateBonusByProfit(index, total, seller) {
     const { profit } = seller;
 
@@ -49,20 +36,13 @@ function calculateBonusByProfit(index, total, seller) {
     return profit * 0.05;
 }
 
-/**
- * Функция для анализа данных продаж
- * @param data
- * @param options
- * @returns {{revenue, top_products, bonus, name, sales_count, profit, seller_id}[]}
- */
-
 function analyzeSalesData(data, options) {
-    // @TODO: Проверка входных данных
+    //Проверка входных данных
     if (!data || !data.purchase_records) {
         throw new Error("Некорректные данные");
     }
 
-    // @TODO: Проверка наличия опций
+    //Проверка наличия опций
     if (typeof options !== "object" || options === null) {
         throw new Error("Некорректные options");
     }
@@ -77,7 +57,7 @@ function analyzeSalesData(data, options) {
         throw new Error("calculateBonus должна быть функцией");
     }
 
-    // @TODO: Подготовка промежуточных данных для сбора статистики
+    //Подготовка промежуточных данных для сбора статистики
     const sellerGroup = groupBy(
         data.purchase_records,
         purchase => purchase.seller_id
@@ -92,7 +72,7 @@ function analyzeSalesData(data, options) {
         products_sold: {}
     }));
 
-    // @TODO: Индексация продавцов и товаров для быстрого доступа
+    //Индексация продавцов и товаров для быстрого доступа
     const sellerIndex = Object.fromEntries(
         sellerStats.map(seller => [seller.id, seller])
     );
@@ -101,7 +81,7 @@ function analyzeSalesData(data, options) {
         data.products.map(product => [product.sku, product])
     );
 
-    // @TODO: Расчет выручки и прибыли для каждого продавца
+    //Расчет выручки и прибыли для каждого продавца
     data.purchase_records.forEach(record => {
         const seller = sellerIndex[record.seller_id];
 
@@ -125,10 +105,10 @@ function analyzeSalesData(data, options) {
         });
     });
 
-    // @TODO: Сортировка продавцов по прибыли
+    //Сортировка продавцов по прибыли
     sellerStats.sort((a, b) => b.profit - a.profit);
 
-    // @TODO: Назначение премий на основе ранжирования
+    //Назначение премий на основе ранжирования
     sellerStats.forEach((seller, index) => {
         seller.bonus = calculateBonus(
             index,
@@ -145,7 +125,7 @@ function analyzeSalesData(data, options) {
             .slice(0, 10);
     });
 
-    // @TODO: Подготовка итоговой коллекции с нужными полями
+    //Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => ({
         seller_id: seller.id,
         name: seller.name,
